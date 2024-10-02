@@ -80,6 +80,7 @@ public class Main {
                 
                 temp = r1.EncodeCharacterNextRotor(temp);
                 temp = end.EncodeCharacterPreviusRotor(temp);
+                head.UpdateRotorPosition();
     
                 System.out.println(temp);
     
