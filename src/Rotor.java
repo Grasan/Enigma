@@ -1,65 +1,72 @@
 package src;
 
 public class Rotor {
-    private Rotor next = null, previus = null;
+    private String name;
+    private Rotor nextRotor, previousRotor;
+    private Reflector reflector = null;
 
-    private int position;   // Rotor position, will update after each encoded letter
+    private int rotorPosition;   // Rotor position, will update after each encoded letter
     private String wiring;  // The internal wiring for the rotor, check en.wikipedia.org/wiki/Enigma_rotor_details 
+    private static final int ALPHABET_SIZE = 26;
 
-    public Rotor (int position, String wiring) {
-        this.position = position;
-        this.wiring = wiring;
+    public Rotor (int rotorPosition, String wiring, String name) {
+        this.rotorPosition = rotorPosition % ALPHABET_SIZE;
+        this.wiring = wiring.toUpperCase();
+        this.name = name;
     }
 
-    public void SetNextRotor(Rotor input) { next = input; }
-    public Rotor GetNextRotor() { return next; }
-    public void SetPreviusRotor(Rotor input) { previus = input; }
-    public Rotor GetPreviusRotor() { return previus; }
+    public void SetNextRotor(Rotor input) { nextRotor = input; }
+    public Rotor GetNextRotor() { return nextRotor; }
+    public void SetPreviusRotor(Rotor input) { previousRotor = input; }
+    public Rotor GetPreviuosRotor() { return previousRotor; }
+    public void SetReflector(Reflector input) { reflector = input; }
+    public Reflector getReflector() { return reflector; }
 
     public void UpdateRotorPosition() {
-        if (position == 25) {
-            position = 0;
-            if (next != null)
-                next.UpdateRotorPosition();
-        } 
-        else
-            position++;
+        rotorPosition = (rotorPosition + 1) % ALPHABET_SIZE;
+
+        if (rotorPosition == 0 && nextRotor != null) 
+            nextRotor.UpdateRotorPosition();
     }
 
     /**
      * This function will encrypt the input character in a similar way the enigma rotors do.
-     * @param input Character to be encryptet
+     * @param charToEncrypt Character to be encryptet
      * @return
      */
-    public char EncodeCharacter(char input) {
+    public char EncodeCharacter(char charToEncrypt) {
             // Get index of character in the alphabet
-        int alphabeticalPosition = Character.toLowerCase(input) - 97;  
+        int charIndex = charToEncrypt - 'A';
+        if (charIndex < 0 || charIndex >= ALPHABET_SIZE)
+            throw new IllegalArgumentException("Character out of range: " + charToEncrypt);
+
             // the alphabet position and current position of the this rotor 
-        int pos = alphabeticalPosition + position;  
-        char encodedChar;                    
+        int transposedIndex = (charIndex + rotorPosition) % ALPHABET_SIZE;  
 
-        // Makes sure the pos value isnt higher then the wiring lenght.
-        if (pos > 25)
-            pos = pos - 25;
 
-        encodedChar = wiring.charAt(pos);
+        char encodedChar = wiring.charAt(transposedIndex);
+        int encodedIndex = (encodedChar - 'A' - rotorPosition + ALPHABET_SIZE) % ALPHABET_SIZE;
 
-        System.out.print(input + "->" + encodedChar + " : ");
+        System.out.println("(" + name +") " + "char at " + transposedIndex + " = " + encodedChar + " : ");
 
-        return encodedChar;
+        return (char) (encodedIndex + 'A');
     }
 
     // Recursive methods calling the rotors to the left/right passing on the encoded char
-    public char EncodeCharacterNextRotor(char input) {
-        if (next != null)
-            return next.EncodeCharacterNextRotor(EncodeCharacter(input));
+    public char EncodeCharacterNextRotor(char charToEncrypt) {
+        char encodedChar = EncodeCharacter(charToEncrypt);
+
+        if (nextRotor != null)
+            return nextRotor.EncodeCharacterNextRotor(encodedChar);
         else
-            return EncodeCharacter(input);
+            return reflector.Reflect(encodedChar);
     }
-    public char EncodeCharacterPreviusRotor(char input) {
-        if (previus != null)
-            return previus.EncodeCharacterPreviusRotor(EncodeCharacter(input));
+    public char EncodeCharacterPreviusRotor(char charToEncrypt) {
+        char encodedChar = EncodeCharacter(charToEncrypt);
+
+        if (previousRotor != null)
+            return previousRotor.EncodeCharacterPreviusRotor(encodedChar);
         else 
-            return EncodeCharacter(input);
+            return encodedChar;
     }
 }

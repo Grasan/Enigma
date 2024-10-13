@@ -1,104 +1,59 @@
 package src;
 
 public class Main {
-
-    // Legit wiring for enigma rotors, check en.wikipedia.org/wiki/Enigma_rotor_details 
-    public static String[] rotorWiring = {
-        "EKMFLGDQVZNTOWYHXUSPAIBRCJ",   // Model: Enigma 1, Rotor# I
-        "AJDKSIRUXBLHWTMCQGZNPYFVOE",   // Model: Enigma 1, Rotor# II
-        "BDFHJLCPRTXVZNYEIWGAKMUSQO"    // Model: Enigma 1, Rotor# III
-    };
-
-    // Rotor setup part 1
-    private static Rotor r1 = new Rotor(0, rotorWiring[0]);
-    private static Rotor r2 = new Rotor(0, rotorWiring[1]);
-    private static Rotor r3 = new Rotor(0, rotorWiring[2]);
+    public static StringBuilder encodedMessage = new StringBuilder();
 
     public static void main(String[] args) {
+        // Legit wiring for enigma rotors, check en.wikipedia.org/wiki/Enigma_rotor_details 
+        String[] rotorWiring = {
+            "EKMFLGDQVZNTOWYHXUSPAIBRCJ",   // Model: Enigma 1, Rotor# I
+            "AJDKSIRUXBLHWTMCQGZNPYFVOE",   // Model: Enigma 1, Rotor# II
+            "BDFHJLCPRTXVZNYEIWGAKMUSQO"    // Model: Enigma 1, Rotor# III
+        };
+
+        // Rotor setup part 1
+        Rotor r1 = new Rotor(0, rotorWiring[0], "R1");
+        Rotor r2 = new Rotor(0, rotorWiring[1], "R2");
+        Rotor r3 = new Rotor(0, rotorWiring[2], "R3");
+        Reflector reflector = new Reflector();
+
+        String message = "eyh";
+
         // Rotor setup part 2
         r1.SetNextRotor(r2);
         r2.SetNextRotor(r3);
         r2.SetPreviusRotor(r1);
         r3.SetPreviusRotor(r2);
+        r3.SetReflector(reflector);
+        reflector.SetLastRotor(r3);
 
         // Testing the encoding here.
-        System.out.println(EncodeStringLinkedList("hello", r1));
+        EncodeStringLinkedList(message, r1);  
+        
+        System.out.println("Encoded message: " + encodedMessage.toString());
     }
-
-    /**
-     * This way of encoding kinda works but is ugly as sh*t
-     * 
-     * way too nested for my taste
-     * @param input
-     * @return
-     */
-    /*public static String EncodeString(String input) {
-        String result = "";
-
-        for (char letter : input.toCharArray()) {
-            char temp = letter;
-
-            if (letter == ' ')
-                result += letter;   // Leaving spaces as is
-            else {
-                System.out.print(temp + " : ");
-
-                for (int i = 0; i < rotors.length; i++) 
-                    temp = rotors[i].EncodeCharacter(temp);
-                
-                for (int i = rotors.length -1; i > -1; i--)
-                    temp = rotors[i].EncodeCharacter(temp);
-
-                System.out.println(" : " + temp);
-
-                result += temp;
-            }
-        }
-        return result;
-    }*/
 
     /**
      * This way looks better and uses recursion 
      * 
      * but it doesnt work as intended
-     * @param input
+     * @param stringToEncrypt
      * @return
      */
-    public static String EncodeStringLinkedList(String input, Rotor head) {
-        String result = "";
-        char temp;
+    public static void EncodeStringLinkedList(String stringToEncrypt, Rotor head) {
+        for (char letter : stringToEncrypt.toCharArray()) {
+            if (Character.isLetter(letter)) {
+                letter = Character.toUpperCase(letter);
 
-        Rotor end = GetLastRotor(head);
-
-        for (char letter : input.toCharArray()) {
-            if (letter == ' ')
-                result += letter;
-            else {
-                temp = letter;
-
-                System.out.print(temp + " : ");
+                System.out.println("Encoding '" + letter + "' : ");
                 
-                temp = r1.EncodeCharacterNextRotor(temp);
-                temp = end.EncodeCharacterPreviusRotor(temp);
+                letter = head.EncodeCharacterNextRotor(letter);
                 head.UpdateRotorPosition();
     
-                System.out.println(temp);
+                System.out.println(letter);
     
-                result += temp;
+                encodedMessage.append(letter);
             }
-        }
-
-        return result;
-    }
-
-    public static Rotor GetLastRotor(Rotor head) {
-        Rotor temp = head;
-
-        while (true) {
-            if (temp.GetNextRotor() == null)
-                return temp;
-            else 
-                temp = temp.GetNextRotor();
         }
     }
 }
