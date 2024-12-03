@@ -5,21 +5,73 @@ import org.junit.Test;
 import src.*;
 
 public class EnigmaRotorTester {
+    static final String ROTOR_WIRING = "EKMFLGDQVZNTOWYHXUSPAIBRCJ",   // Model: Enigma 1, Rotor# I
+                        ROTOR_WIRING_2 = "AJDKSIRUXBLHWTMCQGZNPYFVOE";   // Model: Enigma 1, Rotor# II
+
+    Rotor rotor1 = new Rotor(0, 1),
+        rotor2 = new Rotor(0, 2);
     
     @Test
-    public void TestSimpleCharEncoding() {
-        Rotor r = new Rotor(0, Main.rotorWiring[0]);
+    public void testSimpleCharEncoding() {
+        // Setup
+        rotor1.setRotorPosition(0);
         char testChar = 'A';
+        
+        // Testing function
+        char encodedChar = rotor1.encodeCharacter(testChar);
 
-        assertEquals(Main.rotorWiring[0].charAt(0), r.EncodeCharacter(testChar));
-
+        // Result
+        assertEquals((char)ROTOR_WIRING.charAt(0), encodedChar);
     }
 
     @Test
-    public void TestEncodingAtSpecifikRotorSetting() {
-        Rotor r = new Rotor(15, Main.rotorWiring[0]);
+    public void testEncodingAtSpecifikRotorSetting() {
+        // Setup
+        int position = 1;
+        rotor1.setRotorPosition(position);
         char testChar = 'A';
 
-        assertEquals(Main.rotorWiring[0].charAt(15), r.EncodeCharacter(testChar));
+        // Testing function
+        char encodedChar = rotor1.encodeCharacter(testChar);
+
+        // Result
+        assertEquals((char)ROTOR_WIRING.charAt(position), encodedChar);
+    }
+
+    @Test
+    public void rotorPositionSettingModulo() {
+        // Setup
+        int position = 26;
+
+        // Testing function
+        rotor1.setRotorPosition(position);
+
+        // Result
+        assertEquals(0, rotor1.getRotorPosition());
+    }
+
+    @Test
+    public void rotorRevolution() {
+        // Setup
+        rotor1.setRotorPosition(25);
+
+        // Testing function
+        rotor1.updateRotorPosition();
+
+        // Result
+        assertEquals(0, rotor1.getRotorPosition());
+    }
+
+    @Test
+    public void rotorRevolutionEffectNextRotor() {
+        // Setup
+        rotor1.setNextRotor(rotor2);
+        rotor1.setRotorPosition(25);
+
+        // Testing function
+        rotor1.updateRotorPosition();
+
+        // Result
+        assertEquals(1, rotor2.getRotorPosition());
     }
 }

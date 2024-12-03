@@ -4,53 +4,47 @@ public class Main {
     public static StringBuilder encodedMessage = new StringBuilder();
 
     public static void main(String[] args) {
-        // Legit wiring for enigma rotors, check en.wikipedia.org/wiki/Enigma_rotor_details 
-        String[] rotorWiring = {
-            "EKMFLGDQVZNTOWYHXUSPAIBRCJ",   // Model: Enigma 1, Rotor# I
-            "AJDKSIRUXBLHWTMCQGZNPYFVOE",   // Model: Enigma 1, Rotor# II
-            "BDFHJLCPRTXVZNYEIWGAKMUSQO"    // Model: Enigma 1, Rotor# III
-        };
 
         // Rotor setup part 1
-        Rotor r1 = new Rotor(0, rotorWiring[0], "R1");
-        Rotor r2 = new Rotor(0, rotorWiring[1], "R2");
-        Rotor r3 = new Rotor(0, rotorWiring[2], "R3");
+        Rotor r1 = new Rotor(0, 1);
+        Rotor r2 = new Rotor(0, 2);
+        Rotor r3 = new Rotor(0, 3);
         Reflector reflector = new Reflector();
 
-        String message = "eyh";
+        String message = "hello";
 
         // Rotor setup part 2
-        r1.SetNextRotor(r2);
-        r2.SetNextRotor(r3);
-        r2.SetPreviusRotor(r1);
-        r3.SetPreviusRotor(r2);
-        r3.SetReflector(reflector);
-        reflector.SetLastRotor(r3);
+        r1.setNextRotor(r2);
+        r2.setNextRotor(r3);
+        r2.setPreviusRotor(r1);
+        r3.setPreviusRotor(r2);
+        r3.setReflector(reflector);
+        reflector.setLastRotor(r3);
 
         // Testing the encoding here.
-        EncodeStringLinkedList(message, r1);  
+        encodeStringLinkedList(message, r1);  
         
         System.out.println("Encoded message: " + encodedMessage.toString());
     }
 
     /**
-     * This way looks better and uses recursion 
+     * This looks WAY better and uses recursion 
      * 
-     * but it doesnt work as intended
+     * but it doesnt work as intended... yet
      * @param stringToEncrypt
      * @return
      */
-    public static void EncodeStringLinkedList(String stringToEncrypt, Rotor head) {
+    public static void encodeStringLinkedList(String stringToEncrypt, Rotor head) {
         for (char letter : stringToEncrypt.toCharArray()) {
             if (Character.isLetter(letter)) {
                 letter = Character.toUpperCase(letter);
 
-                System.out.println("Encoding '" + letter + "' : ");
+                System.out.println("Encoding '" + letter);
                 
-                letter = head.EncodeCharacterNextRotor(letter);
-                head.UpdateRotorPosition();
+                letter = head.encodeCharacterNextRotor(letter);
+                head.updateRotorPosition();
     
-                System.out.println(letter);
+                System.out.println("\nResult: " + letter + "\n");
     
                 encodedMessage.append(letter);
             }
