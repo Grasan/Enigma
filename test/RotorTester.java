@@ -1,13 +1,12 @@
 package test;
 
-import static org.junit.Assert.assertEquals;
-import org.junit.Test;
-import src.*;
+import org.testng.annotations.Test;
+import src.Rotor;
 
-public class EnigmaRotorTester {
-    static final String ROTOR_WIRING = "EKMFLGDQVZNTOWYHXUSPAIBRCJ",   // Model: Enigma 1, Rotor# I
-                        ROTOR_WIRING_2 = "AJDKSIRUXBLHWTMCQGZNPYFVOE";   // Model: Enigma 1, Rotor# II
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static src.Globals.WIRE_SETTING;
 
+public class RotorTester {
     Rotor rotor1 = new Rotor(0, 1),
         rotor2 = new Rotor(0, 2);
     
@@ -21,11 +20,11 @@ public class EnigmaRotorTester {
         char encodedChar = rotor1.encodeCharacter(testChar);
 
         // Result
-        assertEquals((char)ROTOR_WIRING.charAt(0), encodedChar);
+        assertEquals(WIRE_SETTING[0].charAt(0), encodedChar);
     }
 
     @Test
-    public void testEncodingAtSpecifikRotorSetting() {
+    public void testEncodingAtSpecificRotorSetting() {
         // Setup
         int position = 1;
         rotor1.setRotorPosition(position);
@@ -35,7 +34,7 @@ public class EnigmaRotorTester {
         char encodedChar = rotor1.encodeCharacter(testChar);
 
         // Result
-        assertEquals((char)ROTOR_WIRING.charAt(position), encodedChar);
+        assertEquals(WIRE_SETTING[0].charAt(position), encodedChar);
     }
 
     @Test

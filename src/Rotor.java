@@ -1,30 +1,26 @@
 package src;
 
+import static src.Globals.ALPHABET_SIZE;
+import static src.Globals.WIRE_SETTING;
+
 public class Rotor {
     private Rotor nextRotor, previousRotor;
     private Reflector reflector = null;
 
     private int rotorPosition;   // Rotor position, will update after each encoded letter
-    // Legit wiring for enigma rotors, check en.wikipedia.org/wiki/Enigma_rotor_details 
-    private String[] wireSettings = {
-        "EKMFLGDQVZNTOWYHXUSPAIBRCJ",   // Model: Enigma 1, Rotor# I
-        "AJDKSIRUXBLHWTMCQGZNPYFVOE",   // Model: Enigma 1, Rotor# II
-        "BDFHJLCPRTXVZNYEIWGAKMUSQO"    // Model: Enigma 1, Rotor# III
-    };
-    // The internal wiring for the rotor, check en.wikipedia.org/wiki/Enigma_rotor_details
-    private String wiring;   
-    private static final int ALPHABET_SIZE = 26;
+
+    private final String wiring;
 
     public Rotor (int rotorPosition, int wireSetting) {
         this.rotorPosition = rotorPosition % ALPHABET_SIZE;
-        this.wiring = wireSettings[wireSetting - 1].toUpperCase();
+        this.wiring = WIRE_SETTING[wireSetting - 1].toUpperCase();
     }
 
     public void setRotorPosition(int position) { rotorPosition = position % ALPHABET_SIZE; }
     public int getRotorPosition() { return rotorPosition; }
     public void setNextRotor(Rotor input) { nextRotor = input; }
     public Rotor getNextRotor() { return nextRotor; }
-    public void setPreviusRotor(Rotor input) { previousRotor = input; }
+    public void setPreviousRotor(Rotor input) { previousRotor = input; }
     public Rotor getPreviuosRotor() { return previousRotor; }
     public void setReflector(Reflector input) { reflector = input; }
     public Reflector getReflector() { return reflector; }
@@ -44,13 +40,13 @@ public class Rotor {
      */
     public char encodeCharacter(char charToEncrypt) {
         // Get index of character in the alphabet
-        int charIndex = charToEncrypt - 'A';
+        var charIndex = charToEncrypt - 'A';
 
-        // the alphabet position and current position of the this rotor 
-        int transposedIndex = (charIndex + rotorPosition) % ALPHABET_SIZE;  
+        // the alphabet position and current position of this rotor
+        var transposedIndex = (charIndex + rotorPosition) % ALPHABET_SIZE;
 
-        char encodedChar = wiring.charAt(transposedIndex);
-        int encodedIndex = (encodedChar - 'A' - rotorPosition + ALPHABET_SIZE) % ALPHABET_SIZE;
+        var encodedChar = wiring.charAt(transposedIndex);
+        var encodedIndex = (encodedChar - 'A' - rotorPosition + ALPHABET_SIZE) % ALPHABET_SIZE;
 
         System.out.print(": " + charToEncrypt + " -> " + encodedChar + " :");
 
@@ -59,7 +55,7 @@ public class Rotor {
 
     // Recursive methods calling the rotors to the left/right passing on the encoded char
     public char encodeCharacterNextRotor(char charToEncrypt) {
-        char encodedChar = encodeCharacter(charToEncrypt);
+        var encodedChar = encodeCharacter(charToEncrypt);
 
         if (nextRotor != null)
             return nextRotor.encodeCharacterNextRotor(encodedChar);
@@ -67,7 +63,7 @@ public class Rotor {
             return reflector.reflect(encodedChar);
     }
     public char encodeCharacterPreviusRotor(char charToEncrypt) {
-        char encodedChar = encodeCharacter(charToEncrypt);
+        var encodedChar = encodeCharacter(charToEncrypt);
 
         if (previousRotor != null)
             return previousRotor.encodeCharacterPreviusRotor(encodedChar);
