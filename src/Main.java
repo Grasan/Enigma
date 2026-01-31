@@ -36,13 +36,6 @@ public class Main {
         IO.println("Decoded message: " + decodedMessage.toString());
     }
 
-    /**
-     * This looks WAY better and uses recursion 
-     * 
-     * but it doesn't work as intended... yet
-     * @param stringToEncrypt
-     * @return
-     */
     void encodeStringLinkedList(String stringToEncrypt, Rotor head, StringBuilder output) {
         for (char letter : stringToEncrypt.toCharArray()) {
             if (letter == ' ') {
