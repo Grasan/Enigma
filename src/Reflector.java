@@ -17,6 +17,6 @@ public class Reflector {
 
         IO.println("\nReflecting: " + input + " -> " + reflectedChar);
         
-        return lastRotor.encodeCharacterPreviusRotor(reflectedChar);
+        return lastRotor.encodeCharacterPreviousRotor(reflectedChar);
     }
 }

@@ -33,41 +33,36 @@ public class Rotor {
             nextRotor.updateRotorPosition();
     }
 
-    /**
-     * This function will encrypt the input character in a similar way the enigma rotors do.
-     * @param charToEncrypt Character to be encryptet
-     * @return
-     */
-    public char encodeCharacter(char charToEncrypt) {
-        // Get index of character in the alphabet
-        var charIndex = charToEncrypt - 'A';
-
-        // the alphabet position and current position of this rotor
-        var transposedIndex = (charIndex + rotorPosition) % ALPHABET_SIZE;
-
-        var encodedChar = wiring.charAt(transposedIndex);
-        var encodedIndex = (encodedChar - 'A' - rotorPosition + ALPHABET_SIZE) % ALPHABET_SIZE;
-
-        System.out.print(": " + charToEncrypt + " -> " + encodedChar + " :");
-
-        return (char) (encodedIndex + 'A');
+    private void displayEncodingResult(char inputChar, char encodedChar) {
+        IO.print(": " + inputChar + " -> " + encodedChar + " :");
     }
 
     // Recursive methods calling the rotors to the left/right passing on the encoded char
-    public char encodeCharacterNextRotor(char charToEncrypt) {
-        var encodedChar = encodeCharacter(charToEncrypt);
+    public char encodeCharacterNextRotor(char input) {
+        var index = input - 'A';
 
-        if (nextRotor != null)
-            return nextRotor.encodeCharacterNextRotor(encodedChar);
-        else
-            return reflector.reflect(encodedChar);
+        var transposedIndex = (index + rotorPosition) % ALPHABET_SIZE;
+
+        var encodedChar = wiring.charAt(transposedIndex);
+
+        displayEncodingResult(input, encodedChar);
+
+        return nextRotor != null
+            ? nextRotor.encodeCharacterNextRotor(encodedChar)
+            : reflector.reflect(encodedChar);
     }
-    public char encodeCharacterPreviusRotor(char charToEncrypt) {
-        var encodedChar = encodeCharacter(charToEncrypt);
 
-        if (previousRotor != null)
-            return previousRotor.encodeCharacterPreviusRotor(encodedChar);
-        else 
-            return encodedChar;
+    public char encodeCharacterPreviousRotor(char input) {
+        var indexAtWireSetting = wiring.indexOf(input);
+        var transposedIndex = (indexAtWireSetting - rotorPosition) % ALPHABET_SIZE;
+        if (transposedIndex < 0) transposedIndex += ALPHABET_SIZE;
+
+        var result = (char)('A' + transposedIndex);
+
+        displayEncodingResult(input, result);
+
+        return previousRotor != null
+            ? previousRotor.encodeCharacterPreviousRotor(result)
+            : result;
     }
 }

@@ -1,29 +1,39 @@
 package src;
 
 public class Main {
-    public static StringBuilder encodedMessage = new StringBuilder();
+    public StringBuilder encodedMessage = new StringBuilder();
+    public StringBuilder decodedMessage = new StringBuilder();
+
+    final int[] positions = {0, 0, 0};
 
     void main() {
-        // Rotor setup part 1
-        Rotor r1 = new Rotor(0, 1);
-        Rotor r2 = new Rotor(0, 2);
-        Rotor r3 = new Rotor(0, 3);
+        // Rotor initialization
+        Rotor rotor1 = new Rotor(positions[0], 1);
+        Rotor rotor2 = new Rotor(positions[1], 2);
+        Rotor rotor3 = new Rotor(positions[2], 3);
         Reflector reflector = new Reflector();
 
-        String message = "hello";
-
-        // Rotor setup part 2
-        r1.setNextRotor(r2);
-        r2.setNextRotor(r3);
-        r2.setPreviousRotor(r1);
-        r3.setPreviousRotor(r2);
-        r3.setReflector(reflector);
-        reflector.setLastRotor(r3);
+        // Rotor setup
+        rotor1.setNextRotor(rotor2);
+        rotor2.setNextRotor(rotor3);
+        rotor2.setPreviousRotor(rotor1);
+        rotor3.setPreviousRotor(rotor2);
+        rotor3.setReflector(reflector);
+        reflector.setLastRotor(rotor3);
 
         // Testing the encoding here.
-        encodeStringLinkedList(message, r1);  
+        String message = "This is a secret message";
 
+        encodeStringLinkedList(message, rotor1, encodedMessage);
         IO.println("Encoded message: " + encodedMessage.toString());
+
+        // Reset rotor positions
+        rotor1.setRotorPosition(positions[0]);
+        rotor2.setRotorPosition(positions[1]);
+        rotor3.setRotorPosition(positions[2]);
+
+        encodeStringLinkedList(encodedMessage.toString(), rotor1, decodedMessage);
+        IO.println("Decoded message: " + decodedMessage.toString());
     }
 
     /**
@@ -33,19 +43,21 @@ public class Main {
      * @param stringToEncrypt
      * @return
      */
-    void encodeStringLinkedList(String stringToEncrypt, Rotor head) {
+    void encodeStringLinkedList(String stringToEncrypt, Rotor head, StringBuilder output) {
         for (char letter : stringToEncrypt.toCharArray()) {
-            if (Character.isLetter(letter)) {
+            if (letter == ' ') {
+                output.append(letter);
+            } else {
                 letter = Character.toUpperCase(letter);
 
                 IO.println("Encoding '" + letter);
-                
+
                 letter = head.encodeCharacterNextRotor(letter);
                 head.updateRotorPosition();
-    
+
                 IO.println("\nResult: " + letter + "\n");
-    
-                encodedMessage.append(letter);
+
+                output.append(letter);
             }
         }
     }
