@@ -1,7 +1,6 @@
 package src;
 
-import static src.Globals.ALPHABET_SIZE;
-import static src.Globals.WIRE_SETTING;
+import static src.Globals.*;
 
 public class Rotor {
     private Rotor nextRotor, previousRotor;
@@ -13,7 +12,7 @@ public class Rotor {
 
     public Rotor (int rotorPosition, int wireSetting) {
         this.rotorPosition = rotorPosition % ALPHABET_SIZE;
-        this.wiring = WIRE_SETTING[wireSetting - 1].toUpperCase();
+        this.wiring = WIRE_SETTING[wireSetting].toUpperCase();
     }
 
     public void setRotorPosition(int position) { rotorPosition = position % ALPHABET_SIZE; }
@@ -33,36 +32,42 @@ public class Rotor {
             nextRotor.updateRotorPosition();
     }
 
-    private void displayEncodingResult(char inputChar, char encodedChar) {
-        IO.print(": " + inputChar + " -> " + encodedChar + " :");
+    private void displayCipherResult(char inputChar, char cipherChar) {
+        IO.print(": " + inputChar + " -> " + cipherChar + " :");
     }
 
-    // Recursive methods calling the rotors to the left/right passing on the encoded char
-    public char encodeCharacterNextRotor(char input) {
-        var index = input - 'A';
-
+    public char forwardCipher(char input) {
+        var index = GET_LETTER_INDEX(input);
         var transposedIndex = (index + rotorPosition) % ALPHABET_SIZE;
 
-        var encodedChar = wiring.charAt(transposedIndex);
-
-        displayEncodingResult(input, encodedChar);
-
-        return nextRotor != null
-            ? nextRotor.encodeCharacterNextRotor(encodedChar)
-            : reflector.reflect(encodedChar);
+        return wiring.charAt(transposedIndex);
     }
-
-    public char encodeCharacterPreviousRotor(char input) {
+    public char reverseCipher(char input) {
         var indexAtWireSetting = wiring.indexOf(input);
         var transposedIndex = (indexAtWireSetting - rotorPosition) % ALPHABET_SIZE;
         if (transposedIndex < 0) transposedIndex += ALPHABET_SIZE;
 
-        var result = (char)('A' + transposedIndex);
+        return (char)('A' + transposedIndex);
+    }
 
-        displayEncodingResult(input, result);
+    // Recursive methods calling the rotors to the left/right passing on the encoded char
+    public char cipherCharacterNextRotor(char input) {
+        var cipherChar = forwardCipher(input);
+
+        displayCipherResult(input, cipherChar);
+
+        return nextRotor != null
+            ? nextRotor.cipherCharacterNextRotor(cipherChar)
+            : reflector.sendBack(cipherChar);
+    }
+
+    public char cipherCharacterPreviousRotor(char input) {
+        var cipherChar = reverseCipher(input);
+
+        displayCipherResult(input, cipherChar);
 
         return previousRotor != null
-            ? previousRotor.encodeCharacterPreviousRotor(result)
-            : result;
+            ? previousRotor.cipherCharacterPreviousRotor(cipherChar)
+            : cipherChar;
     }
 }

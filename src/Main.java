@@ -1,5 +1,7 @@
 package src;
 
+import static src.Globals.REFLECTOR_STANDARD_TRANSPOSITION;
+
 public class Main {
     public StringBuilder encodedMessage = new StringBuilder();
     public StringBuilder decodedMessage = new StringBuilder();
@@ -8,10 +10,10 @@ public class Main {
 
     void main() {
         // Rotor initialization
-        Rotor rotor1 = new Rotor(positions[0], 1);
-        Rotor rotor2 = new Rotor(positions[1], 2);
-        Rotor rotor3 = new Rotor(positions[2], 3);
-        Reflector reflector = new Reflector();
+        Rotor rotor1 = new Rotor(positions[0], 0);
+        Rotor rotor2 = new Rotor(positions[1], 1);
+        Rotor rotor3 = new Rotor(positions[2], 2);
+        Reflector reflector = new Reflector(rotor3, REFLECTOR_STANDARD_TRANSPOSITION);
 
         // Rotor setup
         rotor1.setNextRotor(rotor2);
@@ -19,7 +21,6 @@ public class Main {
         rotor2.setPreviousRotor(rotor1);
         rotor3.setPreviousRotor(rotor2);
         rotor3.setReflector(reflector);
-        reflector.setLastRotor(rotor3);
 
         // Testing the encoding here.
         String message = "This is a secret message";
@@ -45,7 +46,7 @@ public class Main {
 
                 IO.println("Encoding '" + letter);
 
-                letter = head.encodeCharacterNextRotor(letter);
+                letter = head.cipherCharacterNextRotor(letter);
                 head.updateRotorPosition();
 
                 IO.println("\nResult: " + letter + "\n");
