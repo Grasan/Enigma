@@ -4,73 +4,99 @@ import org.testng.annotations.Test;
 import src.Rotor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static src.Globals.REFLECTOR_STANDARD_TRANSPOSITION;
 import static src.Globals.WIRE_SETTING;
 
 public class RotorTester {
-    Rotor rotor1 = new Rotor(0, 1),
-        rotor2 = new Rotor(0, 2);
-    
+    Rotor rotor1 = new Rotor(0, 0),
+        rotor2 = new Rotor(0, 1),
+        rotor3 = new Rotor(0, 2);
+
     @Test
-    public void testSimpleCharEncoding() {
-        // Setup
+    public void simpleCharForwardCipher() {
         rotor1.setRotorPosition(0);
         char testChar = 'A';
-        
-        // Testing function
-        char encodedChar = rotor1.encodeCharacter(testChar);
 
-        // Result
-        assertEquals(WIRE_SETTING[0].charAt(0), encodedChar);
+        char encryptedChar = rotor1.forwardCipher(testChar);
+
+        assertEquals(WIRE_SETTING[0].charAt(0), encryptedChar);
     }
 
     @Test
-    public void testEncodingAtSpecificRotorSetting() {
-        // Setup
-        int position = 1;
+    public void simpleCharReverseCipher() {
+        rotor1.setRotorPosition(0);
+        char testChar = 'A';
+
+        char encryptedChar = rotor1.reverseCipher(testChar);
+
+        assertEquals(WIRE_SETTING[0].charAt(4 + REFLECTOR_STANDARD_TRANSPOSITION), encryptedChar);
+    }
+
+    @Test
+    public void forwardCipherAtSpecificRotorPosition() {
+        int position = 5;
         rotor1.setRotorPosition(position);
         char testChar = 'A';
 
-        // Testing function
-        char encodedChar = rotor1.encodeCharacter(testChar);
+        char encryptedChar = rotor1.forwardCipher(testChar);
 
-        // Result
-        assertEquals(WIRE_SETTING[0].charAt(position), encodedChar);
+        assertEquals(WIRE_SETTING[0].charAt(position), encryptedChar);
+    }
+
+    @Test
+    public void reversedCipherAtSpecificRotorPosition() {
+        int position = 5;
+        rotor1.setRotorPosition(position);
+        char testChar = 'A';
+
+        char encryptedChar = rotor1.reverseCipher(testChar);
+
+        assertEquals(WIRE_SETTING[0].charAt(6 + REFLECTOR_STANDARD_TRANSPOSITION), encryptedChar);
     }
 
     @Test
     public void rotorPositionSettingModulo() {
-        // Setup
         int position = 26;
 
-        // Testing function
         rotor1.setRotorPosition(position);
 
-        // Result
         assertEquals(0, rotor1.getRotorPosition());
     }
 
     @Test
     public void rotorRevolution() {
-        // Setup
         rotor1.setRotorPosition(25);
 
-        // Testing function
         rotor1.updateRotorPosition();
 
-        // Result
         assertEquals(0, rotor1.getRotorPosition());
     }
 
     @Test
     public void rotorRevolutionEffectNextRotor() {
-        // Setup
         rotor1.setNextRotor(rotor2);
         rotor1.setRotorPosition(25);
+        rotor2.setRotorPosition(0);
 
-        // Testing function
         rotor1.updateRotorPosition();
 
-        // Result
+        assertEquals(0, rotor1.getRotorPosition());
         assertEquals(1, rotor2.getRotorPosition());
+    }
+
+    @Test
+    public void rotorRevolutionEffectAllRotors() {
+        rotor1.setRotorPosition(25);
+        rotor2.setRotorPosition(25);
+        rotor3.setRotorPosition(0);
+
+        rotor1.setNextRotor(rotor2);
+        rotor2.setNextRotor(rotor3);
+
+        rotor1.updateRotorPosition();
+
+        assertEquals(0, rotor1.getRotorPosition());
+        assertEquals(0, rotor2.getRotorPosition());
+        assertEquals(1, rotor3.getRotorPosition());
     }
 }
