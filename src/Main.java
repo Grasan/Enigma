@@ -24,6 +24,7 @@ public class Main {
 
         // Testing the encoding here.
         String message = "This is a secret message";
+        message = message.toUpperCase();
 
         encodeStringLinkedList(message, rotor1, encodedMessage);
         IO.println("Encoded message: " + encodedMessage.toString());
@@ -42,12 +43,11 @@ public class Main {
             if (letter == ' ') {
                 output.append(letter);
             } else {
-                letter = Character.toUpperCase(letter);
-
                 IO.println("Encoding '" + letter);
 
-                letter = head.cipherCharacterNextRotor(letter);
                 head.updateRotorPosition();
+
+                letter = head.cipherCharacterNextRotor(letter);
 
                 IO.println("\nResult: " + letter + "\n");
 
