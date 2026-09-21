@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.IntStream;
 
-import static src.Globals.getLetterIndex;
+import static src.Globals.GET_LETTER_INDEX;
 
 public class Plugboard {
     private char[] plugboardSetting = {
@@ -14,25 +14,16 @@ public class Plugboard {
         'U','V','W','X','Y','Z'
     };
 
-    private char[][] settings;
-
-    public Plugboard() {
-        /*
+    public Plugboard(char[][] newSetting) {
         // Check for duplicates
-        if (hasDuplicates(plugs))
-            throw new RuntimeException("Plugboard contains duplicates");
-        else
-            IntStream.range(0, plugs.length).forEach(i -> switchCharacterPositions(plugs[i][0], plugs[i][1]));
 
-         */
-    }
+        for (char[] chars : newSetting) {
+            int index1 = GET_LETTER_INDEX(chars[0]),
+                index2 = GET_LETTER_INDEX(chars[1]);
 
-    public void setSettings(char[][] input) {
-        // Validate
-        if (hasDuplicates(input))
-            throw new RuntimeException("Contains duplicates!");
-
-        settings = input;
+            plugboardSetting[index1] = chars[0];
+            plugboardSetting[index2] = chars[1];
+        }
     }
 
     public Boolean hasDuplicates(char[][] plugs) {
@@ -44,17 +35,7 @@ public class Plugboard {
             .anyMatch(c -> !seen.add(c));
     }
 
-    public void switchCharacterPositions(char from, char to) {
-        int firstIndex = getLetterIndex(from),
-            secondIndex = getLetterIndex(to);
-
-        plugboardSetting[firstIndex] = to;
-        plugboardSetting[secondIndex] = from;
-    }
-
     public char passthrough(char input) {
-        var inputIndex = Globals.getLetterIndex(input);
-
-        return input == plugboardSetting[inputIndex] ? input : plugboardSetting[inputIndex];
+        return plugboardSetting[GET_LETTER_INDEX(input)];
     }
 }
