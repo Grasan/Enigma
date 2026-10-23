@@ -31,15 +31,11 @@ public class Plugboard {
     }
 
     public Boolean hasDuplicates(List<Pair<Character, Character>> plugs) {
-        HashMap<Character, Character> seen = new HashMap<>();
+        HashSet<Character> seen = new HashSet<>();
 
-        for (int i = 0; i < plugs.size(); i++) {
-            if (seen.containsKey(plugs.getLast().getKey()) || seen.containsValue(plugs.getLast().getValue()) ||
-                seen.containsKey(plugs.getLast().getValue()) || seen.containsValue(plugs.getLast().getKey()))
+        for (Pair<Character, Character> plug : plugs)
+            if (!seen.add(plug.getKey()) || !seen.add(plug.getValue()))
                 return true;
-
-            seen.put(plugs.get(i).getKey(), plugs.get(i).getValue());
-        }
 
         return false;
     }
