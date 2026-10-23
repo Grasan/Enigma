@@ -1,38 +1,47 @@
 package src;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.IntStream;
+import javafx.util.Pair;
+
+import java.util.*;
 
 import static src.Globals.GET_LETTER_INDEX;
 
 public class Plugboard {
     private char[] plugboardSetting = {
         'A','B','C','D','E','F','G','H','I','J',
-        'k','L','M','N','O','P','Q','R','S','T',
+        'K','L','M','N','O','P','Q','R','S','T',
         'U','V','W','X','Y','Z'
     };
 
-    public Plugboard(char[][] newSetting) {
+    /*public Plugboard(char[][] newSetting) {
         // Check for duplicates
 
-        for (char[] chars : newSetting) {
-            int index1 = GET_LETTER_INDEX(chars[0]),
-                index2 = GET_LETTER_INDEX(chars[1]);
 
-            plugboardSetting[index1] = chars[0];
-            plugboardSetting[index2] = chars[1];
+
+    }*/
+
+    public void setup(List<Pair<Character, Character>> plugs) {
+        for (Pair<Character, Character> plug : plugs) {
+            int index1 = GET_LETTER_INDEX(plug.getKey()),
+                index2 = GET_LETTER_INDEX(plug.getValue());
+
+            plugboardSetting[index1] = plug.getValue();
+            plugboardSetting[index2] = plug.getKey();
         }
     }
 
-    public Boolean hasDuplicates(char[][] plugs) {
-        Set<Character> seen = new HashSet<>();
+    public Boolean hasDuplicates(List<Pair<Character, Character>> plugs) {
+        HashMap<Character, Character> seen = new HashMap<>();
 
-        return Arrays.stream(plugs)
-            .flatMap(row -> IntStream.range(0, row.length)
-                .mapToObj(i -> row[i]))
-            .anyMatch(c -> !seen.add(c));
+        for (int i = 0; i < plugs.size(); i++) {
+            if (seen.containsKey(plugs.getLast().getKey()) || seen.containsValue(plugs.getLast().getValue()) ||
+                seen.containsKey(plugs.getLast().getValue()) || seen.containsValue(plugs.getLast().getKey()))
+                return true;
+
+            seen.put(plugs.get(i).getKey(), plugs.get(i).getValue());
+        }
+
+        return false;
     }
 
     public char passthrough(char input) {
