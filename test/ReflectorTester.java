@@ -1,6 +1,6 @@
 package test;
 
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 import src.Reflector;
 import src.Rotor;
 
