@@ -2,9 +2,8 @@ package src;
 
 import javafx.util.Pair;
 
-import java.util.*;
-
-import static src.Globals.GET_LETTER_INDEX;
+import java.util.HashSet;
+import java.util.List;
 
 public class Plugboard {
     private char[] plugboardSetting = {
@@ -13,12 +12,10 @@ public class Plugboard {
         'U','V','W','X','Y','Z'
     };
 
-    /*public Plugboard(char[][] newSetting) {
-        // Check for duplicates
+    private static int GET_LETTER_INDEX(char input) {
+        return input - 'A';
+    }
 
-
-
-    }*/
 
     public void setup(List<Pair<Character, Character>> plugs) {
         for (Pair<Character, Character> plug : plugs) {

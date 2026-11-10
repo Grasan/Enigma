@@ -1,18 +1,30 @@
 package src;
 
-import static src.Globals.*;
-
 public class Rotor {
     private Rotor nextRotor, previousRotor;
     private Reflector reflector = null;
 
+    // Legit wiring for enigma rotors, check en.wikipedia.org/wiki/Enigma_rotor_details
+    private static final String[] STANDARD_WIRE_SETTINGS = {
+        "EKMFLGDQVZNTOWYHXUSPAIBRCJ",   // Model: Enigma 1, Rotor# I
+        "AJDKSIRUXBLHWTMCQGZNPYFVOE",   // Model: Enigma 1, Rotor# I
+        "BDFHJLCPRTXVZNYEIWGAKMUSQO"    // Model: Enigma 1, Rotor# III
+    };
     private int rotorPosition;   // Rotor position, will update after each encoded letter
+    public static final int ALPHABET_SIZE = 26;
+    private static int GET_LETTER_INDEX(char input) {
+        return input - 'A';
+    }
 
     private final String wiring;
 
     public Rotor (int rotorPosition, int wireSetting) {
         this.rotorPosition = rotorPosition % ALPHABET_SIZE;
-        this.wiring = WIRE_SETTING[wireSetting].toUpperCase();
+        this.wiring = STANDARD_WIRE_SETTINGS[wireSetting].toUpperCase();
+    }
+    public Rotor (int rotorPosition, String customWireSetting) {
+        this.rotorPosition = rotorPosition;
+        this.wiring = customWireSetting;
     }
 
     public void setRotorPosition(int position) { rotorPosition = position % ALPHABET_SIZE; }

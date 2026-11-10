@@ -1,7 +1,5 @@
 package src;
 
-import static src.Globals.REFLECTOR_STANDARD_TRANSPOSITION;
-
 public class Main {
     public StringBuilder encodedMessage = new StringBuilder();
     public StringBuilder decodedMessage = new StringBuilder();
@@ -13,7 +11,7 @@ public class Main {
         Rotor rotor1 = new Rotor(positions[0], 0);
         Rotor rotor2 = new Rotor(positions[1], 1);
         Rotor rotor3 = new Rotor(positions[2], 2);
-        Reflector reflector = new Reflector(rotor3, REFLECTOR_STANDARD_TRANSPOSITION);
+        Reflector reflector = new Reflector(rotor3);
 
         // Rotor setup
         rotor1.setNextRotor(rotor2);
