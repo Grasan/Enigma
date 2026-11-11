@@ -8,6 +8,14 @@ The purpose of this project is to recreate the core functionality of an Enigma m
 
 The current implementation focuses on the interaction between the different components, including rotor-based substitution, signal reflection, and plugboard connections.
 
+## Requirements
+
+- **Java Development Kit (JDK) 25**
+
+The project is developed using Java 25 and requires a compatible JDK to compile and run.
+
+The JavaFX `Pair` class is currently used for passing configuration data between components.
+
 ## Architecture
 
 The project consists of five core components:
