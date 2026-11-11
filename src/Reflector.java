@@ -1,12 +1,11 @@
 package src;
 
+import static src.Alphabet.ALPHABET_SIZE;
+
 public class Reflector {
     private Rotor lastRotor;
     private int transposition;
     private static final int REFLECTOR_STANDARD_TRANSPOSITION = 13;
-    private static final int ALPHABET_SIZE = 26;
-
-
 
     public Reflector(Rotor lastRotor, int transposition) {
         setLastRotor(lastRotor);
@@ -36,8 +35,6 @@ public class Reflector {
 
     public char sendBack(char input) {
         var reflectedChar = reflect(input);
-
-        IO.println("\nReflecting: " + input + " -> " + reflectedChar);
 
         return lastRotor.cipherCharacterPreviousRotor(reflectedChar);
     }

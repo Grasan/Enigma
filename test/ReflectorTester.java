@@ -7,7 +7,7 @@ import src.Rotor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ReflectorTester {
-    Rotor rotor = new Rotor(0, 0);
+    Rotor rotor = new Rotor(0, "EKMFLGDQVZNTOWYHXUSPAIBRCJ");
 
     @Test
     public void standardReflection() {

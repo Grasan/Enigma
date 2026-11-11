@@ -5,12 +5,10 @@ import javafx.util.Pair;
 import java.util.HashSet;
 import java.util.List;
 
+import static src.Alphabet.ALPHABET;
+
 public class Plugboard {
-    private char[] plugboardSetting = {
-        'A','B','C','D','E','F','G','H','I','J',
-        'K','L','M','N','O','P','Q','R','S','T',
-        'U','V','W','X','Y','Z'
-    };
+    private char[] plugboardSetting = ALPHABET.toCharArray();
 
     private static int GET_LETTER_INDEX(char input) {
         return input - 'A';

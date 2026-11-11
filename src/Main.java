@@ -1,56 +1,56 @@
 package src;
 
-public class Main {
-    public StringBuilder encodedMessage = new StringBuilder();
-    public StringBuilder decodedMessage = new StringBuilder();
+import javafx.util.Pair;
 
-    final int[] positions = {0, 0, 0};
+import java.util.ArrayList;
+
+public class Main {
+    public static EnigmaMachine machine;
+
+    private static String message = "This is a secret message".toUpperCase();
+    private static String cipher;
+    private static String decipher;
+
+    // Legit wiring for enigma rotors, check en.wikipedia.org/wiki/Enigma_rotor_details
+    private static final String[] STANDARD_WIRE_SETTINGS = {
+        "EKMFLGDQVZNTOWYHXUSPAIBRCJ",   // Model: Enigma 1, Rotor# I
+        "AJDKSIRUXBLHWTMCQGZNPYFVOE",   // Model: Enigma 1, Rotor# I
+        "BDFHJLCPRTXVZNYEIWGAKMUSQO"    // Model: Enigma 1, Rotor# III
+    };
 
     void main() {
-        // Rotor initialization
-        Rotor rotor1 = new Rotor(positions[0], 0);
-        Rotor rotor2 = new Rotor(positions[1], 1);
-        Rotor rotor3 = new Rotor(positions[2], 2);
-        Reflector reflector = new Reflector(rotor3);
+        ArrayList<Pair<Integer, String>> rotorSettings = new ArrayList<>();
+        rotorSettings.add(new Pair<>(0, STANDARD_WIRE_SETTINGS[0]));
+        rotorSettings.add(new Pair<>(0, STANDARD_WIRE_SETTINGS[1]));
+        rotorSettings.add(new Pair<>(0, STANDARD_WIRE_SETTINGS[2]));
 
-        // Rotor setup
-        rotor1.setNextRotor(rotor2);
-        rotor2.setNextRotor(rotor3);
-        rotor2.setPreviousRotor(rotor1);
-        rotor3.setPreviousRotor(rotor2);
-        rotor3.setReflector(reflector);
+        ArrayList<Pair<Character, Character>> plugboardSettings = new ArrayList<>();
+        plugboardSettings.add(new Pair<>('A', 'H'));
+        plugboardSettings.add(new Pair<>('F', 'Y'));
+        plugboardSettings.add(new Pair<>('V', 'Q'));
+        plugboardSettings.add(new Pair<>('R', 'N'));
+        plugboardSettings.add(new Pair<>('L', 'T'));
+
+        machine = new EnigmaMachine(rotorSettings, plugboardSettings);
 
         // Testing the encoding here.
-        String message = "This is a secret message";
-        message = message.toUpperCase();
+        firstRun(message);
 
-        encodeStringLinkedList(message, rotor1, encodedMessage);
-        IO.println("Encoded message: " + encodedMessage.toString());
+        // Reset the machines rotor positions
+        machine.resetMachine();
 
-        // Reset rotor positions
-        rotor1.setRotorPosition(positions[0]);
-        rotor2.setRotorPosition(positions[1]);
-        rotor3.setRotorPosition(positions[2]);
-
-        encodeStringLinkedList(encodedMessage.toString(), rotor1, decodedMessage);
-        IO.println("Decoded message: " + decodedMessage.toString());
+        secondRun(cipher);
     }
 
-    void encodeStringLinkedList(String stringToEncrypt, Rotor head, StringBuilder output) {
-        for (char letter : stringToEncrypt.toCharArray()) {
-            if (letter == ' ') {
-                output.append(letter);
-            } else {
-                IO.println("Encoding '" + letter);
+    private static void firstRun(String message) {
+        IO.println("Message to cipher: " + message);
+        cipher = machine.cipherMessage(message);
+        IO.println("Result: " + cipher);
+    }
 
-                head.updateRotorPosition();
-
-                letter = head.cipherCharacterNextRotor(letter);
-
-                IO.println("\nResult: " + letter + "\n");
-
-                output.append(letter);
-            }
-        }
+    private static void secondRun(String message) {
+        IO.println("Message to de-cipher: " + message);
+        decipher = machine.cipherMessage(message);
+        IO.println("Result: " + decipher);
     }
 }
